@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/greengram3
+    username: root
+    password: green502
+
+mybatis:
+  mapper-locations: mappers/**/*.xml
+
+springdoc:
+  swagger-ui:
+    path: /swagger.html
+
+server:
+  port: 8082
+
+fcm:
+  certification: serviceAccountKey.json
