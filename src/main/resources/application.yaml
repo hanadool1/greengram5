@@ -1,4 +1,20 @@
+app:
+  jwt:
+    secret: DaeguGreenArtAcademyClass502RoomForJavaSpringBootFighting
+    header-scheme-name: authorization
+    token-type: Bearer
+    access-token-expiry: 7200000
+    refresh-token-expiry: 129000000
+
+file:
+  dir: D:/download/greengram4/
+
+
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 15MB
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/greengram3

@@ -11,4 +11,5 @@ public class UserSigninVo { // 프론트랑 상의해서 받을 정보 입력
     private String nm;
     private String pic;
     private String firebaseToken;
+    private String accessToken;
 }

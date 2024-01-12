@@ -1,7 +1,7 @@
 package com.green.greengram4.feed;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.green.greengram4.MockMvcConfig;
+//import com.green.greengram4.MockMvcConfig;
 import com.green.greengram4.common.ResVo;
 import com.green.greengram4.feed.model.FeedInsDto;
 import com.green.greengram4.feed.model.FeedSelVo;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@MockMvcConfig
+//@MockMvcConfig
 @WebMvcTest(FeedController.class)
 class FeedControllerTest {
 

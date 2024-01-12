@@ -5,6 +5,7 @@ import com.green.greengram4.feed.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,7 +17,11 @@ public class FeedController {
     private final FeedService service;
 
     @PostMapping
-    public ResVo postFeed(@RequestBody FeedInsDto dto) {
+//    public ResVo postFeed(@RequestBody FeedInsDto dto) {
+        public ResVo postFeed(@RequestPart List<MultipartFile> pics, @RequestPart FeedInsDto dto) {
+        log.info("pics : {}", pics.size());
+        log.info("dto : {}", dto);
+        dto.setPics(pics);
         return service.postFeed(dto);
     }
 

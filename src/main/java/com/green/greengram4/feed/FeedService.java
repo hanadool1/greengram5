@@ -3,20 +3,26 @@ package com.green.greengram4.feed;
 import com.green.greengram4.common.Const;
 import com.green.greengram4.common.ResVo;
 import com.green.greengram4.feed.model.*;
+import com.green.greengram4.security.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class FeedService {
     private final FeedMapper mapper;
     private final FeedPicsMapper picsMapper;
     private final FeedFavMapper favMapper;
     private final FeedCommentMapper commentMapper;
+    private final AuthenticationFacade authenticationFacade;
 
     public ResVo postFeed(FeedInsDto dto) {
+        dto.setIuser(authenticationFacade.getLoginUserPk());
         int affectedFeed = mapper.insFeed(dto);
         // mapper의 메소드를 통해 피드 작성
         int affectedPic = picsMapper.insFeedPics(dto);

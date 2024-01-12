@@ -31,7 +31,7 @@ public class FeedIntegrationTest extends BaseIntegrationTest {
         List<String> pics = new ArrayList<>();
         pics.add("https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzEyMDJfMjc0%2FMDAxNzAxNTIzMTA3Mzk3.tYgZjInAwzSKnKBEswf_qcDf8WaXHUo4sEzKUk9zqNgg._VGQEJBrk67Oq76SiPT1j6S4VR3IYlkWqDY1iDg03Wwg.JPEG.hyunaa98%2FIMG_8784.JPG&type=sc960_832");
         pics.add("https://i.namu.wiki/i/tcjtuVfCgbGkYdb_z1r03tQwDNPQwliB_4zOb3Z8P2cSmWx7u8i5euwz9aEMX-MxEHugOlgWkrIwJLTNAv5i_w.webp");
-        dto.setPics(pics);
+        //dto.setPics(pics);
 
         String json = om.writeValueAsString(dto);
         System.out.println("json :" + json);
