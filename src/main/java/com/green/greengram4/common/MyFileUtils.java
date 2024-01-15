@@ -23,6 +23,7 @@ public class MyFileUtils {
     public String makeFolders(String path) {
         File folder = new File(uploadPrefixPath,path);
         folder.mkdirs();
+        // mkdirs 하위폴더까지 만들어 줌
         return folder.getAbsolutePath();
         // AbsolutePath : 절대주소
     }
@@ -46,11 +47,26 @@ public class MyFileUtils {
 
     }
 
-    //랜덤 파일명 만들기 with 확장자 from MultipartFile
+    // 랜덤 파일명 만들기 with 확장자 from MultipartFile
     public String getRandomFileNm(MultipartFile mf) {
         String fileNm = mf.getOriginalFilename();
 
         return getRandomFileNm(fileNm);
+    }
+
+    // 메모리에 있는 내용 > 파일로 옮기는 메소드
+    public String transferTo(MultipartFile mf, String target) {
+        String fileNm = getRandomFileNm(mf);
+        String folderPath = makeFolders(target);
+        File saveFile = new File(folderPath, fileNm);
+        try {
+            mf.transferTo(saveFile);
+            // 메모리에 있던 내용을 파일로 transfer
+            return fileNm;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

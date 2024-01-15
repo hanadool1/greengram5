@@ -4,10 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,5 +65,15 @@ public class MyFileUtilsTest {
         System.out.println("rFileNm2: " + rFileNm2);
     }
 
+    @Test
+    public void transferToTest() throws Exception {
+        String fileNm = "cat.jpg";
+        String filePath = "D:/home/download/gksk/"+ fileNm;
+        FileInputStream fis = new FileInputStream(filePath);
+        MultipartFile mf = new MockMultipartFile("pic", fileNm, "jpg", fis);
+
+        String saveFileNm = myFileUtils.transferTo(mf, "/feed/10");
+        System.out.println("saveFileNm :" + saveFileNm);
+    }
 
 }

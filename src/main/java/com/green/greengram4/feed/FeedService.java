@@ -1,6 +1,7 @@
 package com.green.greengram4.feed;
 
 import com.green.greengram4.common.Const;
+import com.green.greengram4.common.MyFileUtils;
 import com.green.greengram4.common.ResVo;
 import com.green.greengram4.feed.model.*;
 import com.green.greengram4.security.AuthenticationFacade;
@@ -20,15 +21,25 @@ public class FeedService {
     private final FeedFavMapper favMapper;
     private final FeedCommentMapper commentMapper;
     private final AuthenticationFacade authenticationFacade;
+    private final MyFileUtils myFileUtils;
 
     public ResVo postFeed(FeedInsDto dto) {
         dto.setIuser(authenticationFacade.getLoginUserPk());
         int affectedFeed = mapper.insFeed(dto);
-        // mapper의 메소드를 통해 피드 작성
-        int affectedPic = picsMapper.insFeedPics(dto);
-        // mapper의 메소드를 통해 피드사진 작성
+        String target = "/feed/" + dto.getIfeed();
+        FeedPicsInsDto pDto = new FeedPicsInsDto();
+        pDto.setIfeed(dto.getIfeed());
+        for (MultipartFile file : dto.getPics()) {
+            String saveFileNm = myFileUtils.transferTo(file,target);
+            pDto.getPics().add(saveFileNm);
+        }
+
+        int feedPicsAffectedRow = picsMapper.insFeedPics(pDto);
+
+
+
         return new ResVo(dto.getIfeed());
-        // dto의 pk인 ifeed값 리턴
+
     }
 
     public List<FeedSelVo> getFeedAll(FeedSelDto dto) {

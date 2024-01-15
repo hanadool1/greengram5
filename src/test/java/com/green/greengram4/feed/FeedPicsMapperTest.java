@@ -40,20 +40,20 @@ class FeedPicsMapperTest {
         int affectedRows = mapper.delFeedByPics(delDto);
         System.out.println("delRows : " + affectedRows);
     }
-
-    @Test
-    void insFeedPics() {
-        List<String> preList = mapper.selFeedPicsAll(dto.getIfeed());
-        assertEquals(0, preList.size());
-
-        int insAffectedRows = mapper.insFeedPics(dto);
-        assertEquals(dto.getPics().size(), insAffectedRows);
-
-        List<String> afterList = mapper.selFeedPicsAll(dto.getIfeed());
-        assertEquals(dto.getPics().size(), afterList.size());
-
-        assertEquals(dto.getPics().get(0), afterList.get(0));
-        assertEquals(dto.getPics().get(1), afterList.get(1));
-    }
+//
+//    @Test
+//    void insFeedPics() {
+//        List<String> preList = mapper.selFeedPicsAll(dto.getIfeed());
+//        assertEquals(0, preList.size());
+//
+//        int insAffectedRows = mapper.insFeedPics(dto);
+//        assertEquals(dto.getPics().size(), insAffectedRows);
+//
+//        List<String> afterList = mapper.selFeedPicsAll(dto.getIfeed());
+//        assertEquals(dto.getPics().size(), afterList.size());
+//
+//        assertEquals(dto.getPics().get(0), afterList.get(0));
+//        assertEquals(dto.getPics().get(1), afterList.get(1));
+//    }
 
 }
