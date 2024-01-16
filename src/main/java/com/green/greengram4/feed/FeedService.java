@@ -23,22 +23,27 @@ public class FeedService {
     private final AuthenticationFacade authenticationFacade;
     private final MyFileUtils myFileUtils;
 
-    public ResVo postFeed(FeedInsDto dto) {
+    public FeedPicsInsDto postFeed(FeedInsDto dto) {
         dto.setIuser(authenticationFacade.getLoginUserPk());
+        // authenticationFacade에서 로그인한 유저 pk를 가져와서 dto에 넣는다
         int affectedFeed = mapper.insFeed(dto);
+        // mapper 실행
         String target = "/feed/" + dto.getIfeed();
+        // user 폴더를 만들고 폴더이름을 피드의 pk로 설정
         FeedPicsInsDto pDto = new FeedPicsInsDto();
+        // 객체화
         pDto.setIfeed(dto.getIfeed());
+        // pDto의 ifeed에 dto의 ifeed를 넣는다
         for (MultipartFile file : dto.getPics()) {
+            // 반복문
             String saveFileNm = myFileUtils.transferTo(file,target);
+            // 메모리에 있는 내용을 파일로 옮기는 작업
             pDto.getPics().add(saveFileNm);
+            // pDto의 사진들에 saveFileNm을 넣는다
         }
-
         int feedPicsAffectedRow = picsMapper.insFeedPics(pDto);
-
-
-
-        return new ResVo(dto.getIfeed());
+        // (피드에 사진넣는)mapper 실행
+        return pDto;
 
     }
 

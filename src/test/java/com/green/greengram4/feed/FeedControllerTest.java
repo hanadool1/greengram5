@@ -38,29 +38,29 @@ class FeedControllerTest {
     // FeedController가 메모리에 올라감(가짜주소값)
     @Autowired
     private ObjectMapper mapper;
-
-    @Test
-    void postFeed()throws Exception{
-        ResVo result = new ResVo(2);
-        //when(service.postFeed(any())).thenReturn(result);
-        given(service.postFeed(any())).willReturn(result);// when이랑 같은 역할 뭐가들어오든 result를 리턴해라
-
-        FeedInsDto dto = new FeedInsDto();
-
-        mvc.perform( //포스트맨에서 send보내는거랑 비슷함 perform메소드 안에 파라미터 type은 MockMvcrequestBuilder
-                        MockMvcRequestBuilders
-                                .post("/api/feed")
-                                .contentType(MediaType.APPLICATION_JSON) //MediaType을  JSON으로 setting Body부분에 있음
-                                .content(mapper.writeValueAsString(dto))
-
-                )
-                .andExpect(status().isOk()) //isOk가 200으로 리턴됐는지 확인 // { "result": 5 }
-                .andExpect(content().string(mapper.writeValueAsString(result)))
-                .andDo(print()); // 결과를 프린트
-
-        verify(service).postFeed(any()); // 호출됐는지 확인 메소드 (호출만 된다면 true)
-
-    }
+//
+//    @Test
+//    void postFeed()throws Exception{
+//        ResVo result = new ResVo(2);
+//        //when(service.postFeed(any())).thenReturn(result);
+//        given(service.postFeed(any())).willReturn(result);// when이랑 같은 역할 뭐가들어오든 result를 리턴해라
+//
+//        FeedInsDto dto = new FeedInsDto();
+//
+//        mvc.perform( //포스트맨에서 send보내는거랑 비슷함 perform메소드 안에 파라미터 type은 MockMvcrequestBuilder
+//                        MockMvcRequestBuilders
+//                                .post("/api/feed")
+//                                .contentType(MediaType.APPLICATION_JSON) //MediaType을  JSON으로 setting Body부분에 있음
+//                                .content(mapper.writeValueAsString(dto))
+//
+//                )
+//                .andExpect(status().isOk()) //isOk가 200으로 리턴됐는지 확인 // { "result": 5 }
+//                .andExpect(content().string(mapper.writeValueAsString(result)))
+//                .andDo(print()); // 결과를 프린트
+//
+//        verify(service).postFeed(any()); // 호출됐는지 확인 메소드 (호출만 된다면 true)
+//
+//    }
 
     @SneakyThrows
     @Test

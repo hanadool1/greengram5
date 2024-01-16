@@ -18,7 +18,7 @@ public class FeedController {
 
     @PostMapping
 //    public ResVo postFeed(@RequestBody FeedInsDto dto) {
-        public ResVo postFeed(@RequestPart List<MultipartFile> pics, @RequestPart FeedInsDto dto) {
+        public FeedPicsInsDto postFeed(@RequestPart List<MultipartFile> pics, @RequestPart FeedInsDto dto) {
         log.info("pics : {}", pics.size());
         log.info("dto : {}", dto);
         dto.setPics(pics);
