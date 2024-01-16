@@ -69,4 +69,27 @@ public class MyFileUtils {
         }
     }
 
+    public void delFiles(String folderPath) {
+        // 폴더 아래에 폴더 및 파일 삭제, 보낸 폴더는 삭제 안함
+        File folder = new File(folderPath);
+        // 파일의 full주소를 File타입으로 folder에 저장
+        if (folder.exists()) {
+            File[] files = folder.listFiles();
+            // 폴더 안의 파일들을 리스트형태로
+
+            for (File file: files) {
+                // 반복문 돌면서 체크
+                if (file.isDirectory()) {
+                    // 디렉토리인지 체크
+                    delFiles(file.getAbsolutePath());
+                    // 재귀호출
+                }
+                file.delete();
+            }
+        }
+        // 반복문 돌면서 하위 폴더들과 폴더안의 파일 모두 삭제(스택과 비슷한 push, pop)
+    }
+
+
+
 }
