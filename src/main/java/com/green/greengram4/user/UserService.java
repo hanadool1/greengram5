@@ -6,18 +6,14 @@ import com.green.greengram4.security.JwtTokenProvider;
 import com.green.greengram4.security.MyPrincipal;
 import com.green.greengram4.security.MyUserDetails;
 import com.green.greengram4.user.model.*;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.swing.text.html.parser.Entity;
 
 @Slf4j
 @Service
@@ -131,9 +127,12 @@ public class UserService {
         UserPicPatchDto dto = new UserPicPatchDto();
         dto.setIuser(authenticationFacade.getLoginUserPk());
         // authenticationFacade에서 로그인한 유저 pk를 가져와서 dto에 넣는다
-        String target = "/user/" + dto.getIuser();
+        String path = "/user/" + dto.getIuser();
         // user 폴더를 만들고 폴더이름을 유저의 pk로 설정
-        String file = myFileUtils.transferTo(pic,target);
+
+        myFileUtils.delFolderTrigger(path);
+
+        String file = myFileUtils.transferTo(pic,path);
         // 메모리에 있는 내용을 파일로 옮기는 작업
         dto.setPic(file);
         // dto의 pic에 file을 넣는다

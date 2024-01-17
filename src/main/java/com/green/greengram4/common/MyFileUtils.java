@@ -4,7 +4,6 @@ package com.green.greengram4.common;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -69,7 +68,7 @@ public class MyFileUtils {
         }
     }
 
-    public void delFiles(String folderPath) {
+    public void delFolder(String folderPath) {
         // 폴더 아래에 폴더 및 파일 삭제, 보낸 폴더는 삭제 안함
         File folder = new File(folderPath);
         // 파일의 full주소를 File타입으로 folder에 저장
@@ -81,13 +80,19 @@ public class MyFileUtils {
                 // 반복문 돌면서 체크
                 if (file.isDirectory()) {
                     // 디렉토리인지 체크
-                    delFiles(file.getAbsolutePath());
+                    delFolder(file.getAbsolutePath());
                     // 재귀호출
+                } else {
+                    file.delete();
                 }
-                file.delete();
             }
+            folder.delete();
         }
         // 반복문 돌면서 하위 폴더들과 폴더안의 파일 모두 삭제(스택과 비슷한 push, pop)
+    }
+
+    public void delFolderTrigger(String relativePath) {
+        delFolder(uploadPrefixPath + relativePath);
     }
 
 
