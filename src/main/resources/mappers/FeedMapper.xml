@@ -49,4 +49,10 @@
         AND ifeed= #{ifeed}
     </delete>
 
+    <select id="checkUser">
+        SELECT iuser
+        FROM t_feed
+        WHERE ifeed = #{ifeed}
+    </select>
+
 </mapper>

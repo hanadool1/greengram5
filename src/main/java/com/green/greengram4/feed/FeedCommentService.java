@@ -5,6 +5,7 @@ import com.green.greengram4.feed.model.FeedCommentDelDto;
 import com.green.greengram4.feed.model.FeedCommentInsDto;
 import com.green.greengram4.feed.model.FeedCommentSelDto;
 import com.green.greengram4.feed.model.FeedCommentSelVo;
+import com.green.greengram4.security.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,10 @@ import java.util.List;
 @Service
 public class FeedCommentService {
     private final FeedCommentMapper mapper;
+    private final AuthenticationFacade authenticationFacade;
 
     public ResVo postFeedComment(FeedCommentInsDto dto) {
+        dto.setIuser(authenticationFacade.getLoginUserPk());
         int comment = mapper.insFeedComment(dto);
         return new ResVo(dto.getIfeedComment());
     }

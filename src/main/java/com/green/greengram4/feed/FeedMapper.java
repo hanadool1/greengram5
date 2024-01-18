@@ -14,4 +14,5 @@ public interface FeedMapper {
     List<FeedSelVo> selFeedAll(FeedSelDto dto);
     int selFeed(FeedDelDto dto);
     int delFeed(FeedDelDto dto);
+    int checkUser(int ifeed);
 }

@@ -1,15 +1,19 @@
 package com.green.greengram4.feed;
 
 import com.green.greengram4.common.ResVo;
+import com.green.greengram4.exception.FeedErrorCode;
+import com.green.greengram4.exception.RestApiException;
 import com.green.greengram4.feed.model.FeedCommentDelDto;
 import com.green.greengram4.feed.model.FeedCommentInsDto;
 import com.green.greengram4.feed.model.FeedCommentSelDto;
 import com.green.greengram4.feed.model.FeedCommentSelVo;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 @RestController
@@ -19,7 +23,8 @@ public class FeedCommentController {
     private final FeedCommentService service;
 
     @PostMapping
-    public ResVo postFeedComment(@RequestBody FeedCommentInsDto dto){
+    public ResVo postFeedComment(@Valid @RequestBody FeedCommentInsDto dto){
+
         log.info("dto : {}",dto);
         return service.postFeedComment(dto);
     }
