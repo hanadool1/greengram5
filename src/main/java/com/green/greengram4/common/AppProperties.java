@@ -12,7 +12,7 @@ public class AppProperties {
 
     @Getter
     @Setter
-    public class Jwt {
+    public static class Jwt {
         private String secret;
         private String headerSchemeName;
         private String tokenType;

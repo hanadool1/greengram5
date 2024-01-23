@@ -29,27 +29,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(CommonErrorCode.INVALID_PARAMETER, e.getMessage());
     }
 
-    @ExceptionHandler(RestApiException.class)//서버 메세지 외에 내가 설정한 메세지를 보내고 싶을 때 사용되는 메소드
-    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.warn("handleMethodArgumentNotValidException", e);
-
-        /*
-        List<String> errors = new ArrayList<>();
-        for(FieldError lfe : e.getBindingResult().getFieldErrors()){
-            errors.add(lfe.getDefaultMessage());
-        }
-        return handleExceptionInternal(CommonErrorCode.INVALID_PARAMETER,errors.toString());
-        */
-
-        List<String> errors = e.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(item -> item.getDefaultMessage())
-                .collect(Collectors.toList());
-        // stream 일회용
-
-        return handleExceptionInternal(CommonErrorCode.INVALID_PARAMETER,errors.toString());
-    }
+//    @ExceptionHandler(RestApiException.class)//서버 메세지 외에 내가 설정한 메세지를 보내고 싶을 때 사용되는 메소드
+//    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+//        log.warn("handleMethodArgumentNotValidException", e);
+//
+//        /*
+//        List<String> errors = new ArrayList<>();
+//        for(FieldError lfe : e.getBindingResult().getFieldErrors()){
+//            errors.add(lfe.getDefaultMessage());
+//        }
+//        return handleExceptionInternal(CommonErrorCode.INVALID_PARAMETER,errors.toString());
+//        */
+//
+//        List<String> errors = e.getBindingResult()
+//                .getFieldErrors()
+//                .stream()
+//                .map(item -> item.getDefaultMessage())
+//                .collect(Collectors.toList());
+//        // stream 일회용
+//
+//        return handleExceptionInternal(CommonErrorCode.INVALID_PARAMETER,errors.toString());
+//    }
 
 
     @ExceptionHandler(Exception.class)
