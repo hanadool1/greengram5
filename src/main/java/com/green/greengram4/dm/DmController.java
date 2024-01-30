@@ -10,6 +10,8 @@ import java.util.List;
 
 @Slf4j
 @RestController
+// RestController 목표 : 응답이 JSON
+// 서버의 목표 : 요청이 오면 응답
 @RequiredArgsConstructor
 @RequestMapping("/api/dm")
 public class DmController {

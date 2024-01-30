@@ -31,15 +31,15 @@ class FeedPicsMapperTest {
 
     @Autowired
     private FeedPicsMapper mapper;
-
-    @BeforeEach
-    public void beforeEach() {
-        FeedDelDto delDto = new FeedDelDto();
-        delDto.setIfeed(this.dto.getIfeed());
-        delDto.setIuser(2);
-        int affectedRows = mapper.delFeedByPics(delDto);
-        System.out.println("delRows : " + affectedRows);
-    }
+//
+//    @BeforeEach
+//    public void beforeEach() {
+//        FeedDelDto delDto = new FeedDelDto();
+//        delDto.setIfeed(this.dto.getIfeed());
+//        delDto.setIuser(2);
+//        int affectedRows = mapper.delFeedByPics(delDto);
+//        System.out.println("delRows : " + affectedRows);
+//    }
 //
 //    @Test
 //    void insFeedPics() {

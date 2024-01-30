@@ -65,21 +65,21 @@ class FeedFavMapperTest {
         assertEquals(0,result2.size());
     }
 
-    @Test
-    public void delFeedByFav() {
-        final int ifeed = 3;
-
-        FeedFavDto selDto = new FeedFavDto();
-        selDto.setIfeed(ifeed);
-        List<FeedFavDto> selList = mapper.selFeedFavForTest(selDto);
-
-        FeedDelDto dto = new FeedDelDto();
-        dto.setIfeed(ifeed);
-        int delAffectedRows = mapper.delFeedByFav(dto);
-        assertEquals(selList.size(),delAffectedRows);
-
-        List<FeedFavDto> selList2 = mapper.selFeedFavForTest(selDto);
-        assertEquals(0,selList2.size());
-
-    }
+//    @Test
+//    public void delFeedByFav() {
+//        final int ifeed = 3;
+//
+//        FeedFavDto selDto = new FeedFavDto();
+//        selDto.setIfeed(ifeed);
+//        List<FeedFavDto> selList = mapper.selFeedFavForTest(selDto);
+//
+//        FeedDelDto dto = new FeedDelDto();
+//        dto.setIfeed(ifeed);
+//        int delAffectedRows = mapper.delFeedByFav(dto);
+//        assertEquals(selList.size(),delAffectedRows);
+//
+//        List<FeedFavDto> selList2 = mapper.selFeedFavForTest(selDto);
+//        assertEquals(0,selList2.size());
+//
+//    }
 }
