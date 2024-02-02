@@ -8,6 +8,7 @@ import com.green.greengram4.security.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class FeedService {
     private final AuthenticationFacade authenticationFacade;
     private final MyFileUtils myFileUtils;
 
+    @Transactional
     public FeedPicsInsDto postFeed(FeedInsDto dto) {
         dto.setIuser(authenticationFacade.getLoginUserPk());
         // authenticationFacade에서 로그인한 유저 pk를 가져와서 dto에 넣는다

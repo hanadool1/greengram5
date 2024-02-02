@@ -1,3 +1,10 @@
+openapi:
+  apartment:
+    base-url: http://openapi.molit.go.kr
+    data-url: OpenAPI_ToolInstallPackge/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev
+    service-key: 0Y8zK3fwyGzGgFEo5APdboJJax3jxscYnB5FiHDk6OeET4YFe%2FSLBILSY6bCSVIe3IJJzT7leElTvpl4QSqzLg%3D%3D
+
+
 app:
   jwt:
     secret: DaeguGreenArtAcademyClass502RoomForJavaSpringBootFighting
@@ -17,8 +24,8 @@ spring:
       max-file-size: 5MB
       max-request-size: 15MB
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/greengram4
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://localhost:3306/greengram4
     username: root
     password: green502
 
@@ -35,6 +42,17 @@ server:
 fcm:
   certification: serviceAccountKey.json
 
+logging:
+  level:
+    jdbc:
+      sqlonly: off
+      sqltiming: info
+      resultsettable: info
+      audit: off
+      resultset: off
+      connection: off
+
+
 ---
 
 spring:
@@ -49,6 +67,8 @@ file:
   dir: /home/download/
 server:
   port: 8081
+
+
 
 
 ---
