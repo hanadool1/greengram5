@@ -6,10 +6,13 @@
 
     <insert id="insUser" useGeneratedKeys="true" keyProperty="iuser">
         INSERT INTO t_user
-        SET uid = #{uid}
-        , upw = #{upw}
-        , nm = #{nm}
-        , pic = #{pic}
+        SET
+        provider_type = #{providerType},
+        uid = #{uid},
+        upw = #{upw},
+        nm = #{nm},
+        pic = #{pic},
+        role = #{role}
     </insert>
 
     <select id="selUser">
@@ -17,8 +20,8 @@
         firebase_token AS firebaseToken, created_at AS createdAt, updated_at AS updatedAt
         FROM t_user
         WHERE
-        <if test=" uid != null and uid != '' ">
-            uid = #{uid}
+        <if test=" uid != null and uid != '' and providerType != null and providerType != '' ">
+            prvider_type = #{providerType} AND uid = #{uid}
         </if>
         <if test=" iuser > 0 ">
             iuser = #{iuser}

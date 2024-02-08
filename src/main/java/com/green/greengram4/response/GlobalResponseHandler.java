@@ -23,6 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 //@RestControllerAdvice(basePackages = "com.green.greengram4")
 public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
+    // 컨트롤러에서 리턴형식이 다 다름 > 통일
 
     private final ObjectMapper om;
 
