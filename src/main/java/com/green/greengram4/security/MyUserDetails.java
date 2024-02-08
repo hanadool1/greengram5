@@ -15,10 +15,7 @@ import java.util.stream.Collectors;
 public class MyUserDetails implements UserDetails, OAuth2User {
 
     private MyPrincipal myPrincipal;
-    @Override
-    public Map<String, Object> getAttributes() {
-        return null;
-    }
+    private Map<String , Object> attributes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
