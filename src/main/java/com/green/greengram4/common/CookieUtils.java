@@ -5,21 +5,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import org.springframework.stereotype.Component;
+import org.springframework.util.SerializationUtils;
+
+import java.util.Base64;
+import java.util.Optional;
 
 @Component
 
 public class CookieUtils {
-    public Cookie getCookie(HttpServletRequest request, String name) {
+    public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    return cookie;
+                    return Optional.of(cookie);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
@@ -35,5 +39,17 @@ public class CookieUtils {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    public String serialize(Object obj) {
+        return Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(obj));
+    }
+
+    public <T> T deserialize(Cookie cookie, Class<T> cls) {
+        return cls.cast(
+                SerializationUtils.deserialize(
+                        Base64.getUrlDecoder().decode(cookie.getValue())
+                )
+        );
     }
 }

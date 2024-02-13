@@ -1,6 +1,10 @@
-package com.green.greengram4.security.oauth2.userinfo;
+package com.green.greengram4.security.oauth2;
 
+import com.green.greengram4.security.MyPrincipal;
+import com.green.greengram4.security.MyUserDetails;
 import com.green.greengram4.security.oauth2.SocialProviderType;
+import com.green.greengram4.security.oauth2.userinfo.OAuth2UserInfo;
+import com.green.greengram4.security.oauth2.userinfo.OAuth2UserInfoFactory;
 import com.green.greengram4.user.UserMapper;
 import com.green.greengram4.user.model.UserEntity;
 import com.green.greengram4.user.model.UserSelDto;
@@ -39,7 +43,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         SocialProviderType socialProviderType = SocialProviderType.valueOf(userRequest.getClientRegistration()
                 .getRegistrationId()
                 .toUpperCase());
-        user.getAttributes();
         OAuth2UserInfo oAuth2UserInfo = factory.getOAuth2UserInfo(socialProviderType, user.getAttributes());
         UserSelDto dto = UserSelDto.builder()
                 .prviderType(socialProviderType.name())
@@ -50,7 +53,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (savedUser == null) { // 회원가입 처리
             savedUser = signupUser(oAuth2UserInfo, socialProviderType);
         }
-        return null;
+
+        MyPrincipal myPrincipal = MyPrincipal.builder()
+                .iuser(savedUser.getIuser())
+                .build();
+
+        myPrincipal.getRoles().add(savedUser.getRole());
+
+        return MyUserDetails.builder()
+                .userEntity(savedUser)
+                .myPrincipal(myPrincipal)
+                .attributes(user.getAttributes())
+                .build();
     }
 
     private UserEntity signupUser(OAuth2UserInfo oAuth2UserInfo, SocialProviderType socialProviderType) {
@@ -65,7 +79,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         UserEntity entity = new UserEntity();
         entity.setIuser(dto.getIuser());
+        entity.setUid(dto.getUid());
         entity.setRole(dto.getRole());
+        entity.setNm(dto.getNm());
+        entity.setPic(dto.getPic());
         return entity;
     }
 

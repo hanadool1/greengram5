@@ -12,7 +12,10 @@ app:
     token-type: Bearer
     access-token-expiry: 7200000
     refresh-token-expiry: 129000000
-
+  oauth2:
+    authorized-redirect-uris:
+      - http://localhost:8080/oauth/redirect
+      - http://192.168.0.144:8080/oauth/redirect
 
 file:
   dir: D:/download/greengram4/
