@@ -110,6 +110,22 @@ logging:
 spring:
   config:
     activate:
+      on-profile: "jpa"
+  datasource:
+    url: jdbc:log4jdbc:mariadb://localhost:3306/greengram5_jpa
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+---
+
+spring:
+  config:
+    activate:
       on-profile: "prod1"
   datasource:
     url: jdbc.mariadb://192.168.0.144:55/greengram3

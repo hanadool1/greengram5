@@ -56,7 +56,7 @@ public class UserService {
         UserSelDto sDto = new UserSelDto();
         sDto.setUid(dto.getUid());
 
-        UserEntity entity = mapper.selUser(sDto);
+        UserModel entity = mapper.selUser(sDto);
         if(entity == null) { // 아이디 없음
             throw new RestApiException(VALID_EXIST_USER_ID);
             //} else if(!BCrypt.checkpw(dto.getUpw(), entity.getUpw())) {

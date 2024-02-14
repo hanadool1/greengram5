@@ -4,7 +4,7 @@ package com.green.greengram4.user.model;
 import lombok.Data;
 
 @Data
-public class UserEntity {
+public class UserModel {
     private int iuser;
     private String uid;
     private String upw;
