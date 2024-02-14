@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class UserSelDto {
     private String uid;
     private int iuser;
-    private String prviderType;
+    private String providerType;
 }

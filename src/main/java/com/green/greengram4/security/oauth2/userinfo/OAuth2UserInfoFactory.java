@@ -8,8 +8,8 @@ import java.util.Map;
 @Component
 public class OAuth2UserInfoFactory {
     public OAuth2UserInfo getOAuth2UserInfo(SocialProviderType socialProviderType,
-                                            Map<String , Object> attrs) {
-        return switch (socialProviderType) {
+                                            Map<String, Object> attrs) {
+        return switch(socialProviderType) {
             case KAKAO -> new KakaoOAuth2UserInfo(attrs);
             case NAVER -> new NaverOAuth2UserInfo(attrs);
             default -> throw new IllegalArgumentException("Invalid Provider Type.");

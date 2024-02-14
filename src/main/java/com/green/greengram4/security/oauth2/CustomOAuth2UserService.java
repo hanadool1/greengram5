@@ -25,8 +25,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserMapper mapper;
     private final OAuth2UserInfoFactory factory;
 
-
-
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User user = super.loadUser(userRequest);
@@ -40,24 +38,25 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
-        SocialProviderType socialProviderType = SocialProviderType.valueOf(userRequest.getClientRegistration()
+        SocialProviderType socialProviderType
+                = SocialProviderType.valueOf(userRequest.getClientRegistration()
                 .getRegistrationId()
-                .toUpperCase());
+                .toUpperCase()
+        );
+
         OAuth2UserInfo oAuth2UserInfo = factory.getOAuth2UserInfo(socialProviderType, user.getAttributes());
         UserSelDto dto = UserSelDto.builder()
-                .prviderType(socialProviderType.name())
+                .providerType(socialProviderType.name())
                 .uid(oAuth2UserInfo.getId())
                 .build();
         UserEntity savedUser = mapper.selUser(dto);
-        // savedUser가 null인 경우 : 한번도 소셜로그인을 하지 않았다
-        if (savedUser == null) { // 회원가입 처리
+        if(savedUser == null) { //회원가입 처리
             savedUser = signupUser(oAuth2UserInfo, socialProviderType);
         }
 
         MyPrincipal myPrincipal = MyPrincipal.builder()
                 .iuser(savedUser.getIuser())
                 .build();
-
         myPrincipal.getRoles().add(savedUser.getRole());
 
         return MyUserDetails.builder()
@@ -69,7 +68,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private UserEntity signupUser(OAuth2UserInfo oAuth2UserInfo, SocialProviderType socialProviderType) {
         UserSignupProcDto dto = new UserSignupProcDto();
-        dto.setProvideType(socialProviderType.name());
+        dto.setProviderType(socialProviderType.name());
         dto.setUid(oAuth2UserInfo.getId());
         dto.setUpw("social");
         dto.setNm(oAuth2UserInfo.getName());
@@ -85,5 +84,4 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         entity.setPic(dto.getPic());
         return entity;
     }
-
 }

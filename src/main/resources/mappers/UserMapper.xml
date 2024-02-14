@@ -16,12 +16,12 @@
     </insert>
 
     <select id="selUser">
-        SELECT iuser, uid, upw, nm, pic, role, provider_type AS prviderType
+        SELECT iuser, uid, upw, nm, pic, role, provider_type AS providerType,
         firebase_token AS firebaseToken, created_at AS createdAt, updated_at AS updatedAt
         FROM t_user
         WHERE
         <if test=" uid != null and uid != '' and providerType != null and providerType != '' ">
-            prvider_type = #{providerType} AND uid = #{uid}
+            provider_type = #{providerType} AND uid = #{uid}
         </if>
         <if test=" iuser > 0 ">
             iuser = #{iuser}
