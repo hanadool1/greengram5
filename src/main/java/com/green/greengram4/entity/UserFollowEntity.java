@@ -9,11 +9,13 @@ import lombok.Data;
 public class UserFollowEntity extends CreatedAtEntity{
     @EmbeddedId
     private UserFollowIds userFollowIds;
+    // 복합키 거는 거
 
     @ManyToOne
     @MapsId("fromIuser")
     @JoinColumn(name = "from_iuser", columnDefinition = "BIGINT UNSIGNED")
     private UserEntity fromUserEntity;
+    // 외래키 거는 거
 
     @ManyToOne
     @MapsId("toIuser")
