@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.green.greengram4.exception.AuthErrorCode.*;
 
@@ -30,7 +31,7 @@ import static com.green.greengram4.exception.AuthErrorCode.*;
 public class UserService {
     private final UserMapper mapper;
     private final UserRepository repository;
-    private final UserFollowRepositoty followRepositoty;
+    private final UserFollowRepositoty followRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AppProperties appProperties;
@@ -245,19 +246,22 @@ public class UserService {
     @Transactional
     public ResVo toggleFollow(UserFollowDto dto) {
         UserFollowIds ids = new UserFollowIds();
-        ids.setFromIuser(dto.getFromIuser());
+        ids.setFromIuser((long)authenticationFacade.getLoginUserPk());
         ids.setToIuser(dto.getToIuser());
-        Optional<UserFollowEntity> optEntity = followRepositoty.findById(ids);
-        UserFollowEntity entity = optEntity.isPresent() ? optEntity.get() : null;
 
-        if (entity == null) {
-            UserFollowEntity saveUserFollowEntity = new UserFollowEntity();
-            saveUserFollowEntity.setUserFollowIds(ids);
-            followRepositoty.save(saveUserFollowEntity);
-        }
-        else {
-            followRepositoty.delete(entity);
-        }
-        return new ResVo(Const.SUCCESS);
+        AtomicInteger atomic = new AtomicInteger(Const.FAIL);
+                followRepository.findById(ids)
+                .ifPresentOrElse( entity -> followRepository.delete(entity), () -> {
+                            atomic.set(Const.SUCCESS);
+                            UserFollowEntity saveUserFollowEntity = new UserFollowEntity();
+                            saveUserFollowEntity.setUserFollowIds(ids);
+                            UserEntity fromUserEntity = repository.getReferenceById((long)authenticationFacade.getLoginUserPk());
+                            UserEntity toUserEntity = repository.getReferenceById(dto.getToIuser());
+                            saveUserFollowEntity.setFromUserEntity(fromUserEntity);
+                            saveUserFollowEntity.setToUserEntity(toUserEntity);
+                            followRepository.save(saveUserFollowEntity);
+                        }
+                );
+        return new ResVo(atomic.get());
     }
 }

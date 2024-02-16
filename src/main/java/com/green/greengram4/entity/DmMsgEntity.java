@@ -27,5 +27,4 @@ public class DmMsgEntity extends CreatedAtEntity{
     private String msg;
 
 
-
 }

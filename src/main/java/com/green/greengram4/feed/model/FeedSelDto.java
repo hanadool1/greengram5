@@ -9,6 +9,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class FeedSelDto {
+    @JsonIgnore
     @Schema(title = "페이지")
     private int page;
 

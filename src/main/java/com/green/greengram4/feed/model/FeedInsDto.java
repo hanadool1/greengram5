@@ -10,9 +10,9 @@ import java.util.List;
 public class FeedInsDto {
     @JsonIgnore
     //@Schema(hidden = true)
-    private int ifeed;
+    private Long ifeed;
     @JsonIgnore
-    private int iuser;
+    private Long iuser;
     private String contents;
     private String location;
     @JsonIgnore

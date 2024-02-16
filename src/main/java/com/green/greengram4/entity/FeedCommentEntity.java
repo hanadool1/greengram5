@@ -19,10 +19,10 @@ public class FeedCommentEntity extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "iuser", nullable = false)
-    private UserEntity iuser;
+    private UserEntity userEntity;
 
     @ManyToOne
     @JoinColumn(name = "ifeed", nullable = false)
-    private FeedEntity ifeed;
+    private FeedEntity feedEntity;
 
 }

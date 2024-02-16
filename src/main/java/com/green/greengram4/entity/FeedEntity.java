@@ -1,7 +1,12 @@
 package com.green.greengram4.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -20,6 +25,10 @@ public class FeedEntity extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "iuser", nullable = false)
-    private UserEntity iuser;
+    private UserEntity userEntity;
+
+    @ToString.Exclude // @Data에 @ToString 어노테이션이 있기 때문에, 이 멤버필드는 ToString 제외 시켜달라는 어노테이션
+    @OneToMany(mappedBy = "feedEntity", cascade = CascadeType.PERSIST) // 양방향
+    private List<FeedPicsEntity> feedPicsEntityList = new ArrayList<>();
 
 }

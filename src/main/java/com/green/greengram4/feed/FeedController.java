@@ -4,6 +4,8 @@ import com.green.greengram4.common.ResVo;
 import com.green.greengram4.feed.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,9 +28,11 @@ public class FeedController {
     }
 
     @GetMapping
-    public List<FeedSelVo> getFeedAll(FeedSelDto dto) {
+    public List<FeedSelVo> getFeedAll(FeedSelDto dto, @PageableDefault(page = 1, size = 30) Pageable pageable) {
         log.info("dto : {}",dto);
-        return service.getFeedAll(dto);
+        log.info("pageable : {}", pageable);
+        List<FeedSelVo> list = service.getFeedAll(dto, pageable);
+        return list;
     }
 
     @GetMapping("/fav")

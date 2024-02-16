@@ -3,15 +3,24 @@ package com.green.greengram4.feed;
 import com.green.greengram4.common.Const;
 import com.green.greengram4.common.MyFileUtils;
 import com.green.greengram4.common.ResVo;
+import com.green.greengram4.entity.FeedEntity;
+import com.green.greengram4.entity.FeedPicsEntity;
+import com.green.greengram4.entity.UserEntity;
+import com.green.greengram4.exception.FeedErrorCode;
+import com.green.greengram4.exception.RestApiException;
 import com.green.greengram4.feed.model.*;
 import com.green.greengram4.security.AuthenticationFacade;
+import com.green.greengram4.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -21,35 +30,77 @@ public class FeedService {
     private final FeedPicsMapper picsMapper;
     private final FeedFavMapper favMapper;
     private final FeedCommentMapper commentMapper;
+    private final FeedRepository feedRepository;
+    private final UserRepository userRepository;
     private final AuthenticationFacade authenticationFacade;
     private final MyFileUtils myFileUtils;
 
+//    @Transactional
+//    public FeedPicsInsDto postFeed(FeedInsDto dto) {
+//        dto.setIuser(authenticationFacade.getLoginUserPk());
+//        // authenticationFacade에서 로그인한 유저 pk를 가져와서 dto에 넣는다
+//        int affectedFeed = mapper.insFeed(dto);
+//        // mapper 실행
+//        String target = "/feed/" + dto.getIfeed();
+//        // user 폴더를 만들고 폴더이름을 피드의 pk로 설정
+//        FeedPicsInsDto pDto = new FeedPicsInsDto();
+//        // 객체화
+//        pDto.setIfeed(dto.getIfeed());
+//        // pDto의 ifeed에 dto의 ifeed를 넣는다
+//        for (MultipartFile file : dto.getPics()) {
+//            // 반복문
+//            String saveFileNm = myFileUtils.transferTo(file,target);
+//            // 메모리에 있는 내용을 파일로 옮기는 작업
+//            pDto.getPics().add(saveFileNm);
+//            // pDto의 사진들에 saveFileNm을 넣는다
+//        }
+//        int feedPicsAffectedRow = picsMapper.insFeedPics(pDto);
+//        // (피드에 사진넣는)mapper 실행
+//        return pDto;
+//
+//    }
+
     @Transactional
     public FeedPicsInsDto postFeed(FeedInsDto dto) {
-        dto.setIuser(authenticationFacade.getLoginUserPk());
-        // authenticationFacade에서 로그인한 유저 pk를 가져와서 dto에 넣는다
-        int affectedFeed = mapper.insFeed(dto);
-        // mapper 실행
-        String target = "/feed/" + dto.getIfeed();
-        // user 폴더를 만들고 폴더이름을 피드의 pk로 설정
-        FeedPicsInsDto pDto = new FeedPicsInsDto();
-        // 객체화
-        pDto.setIfeed(dto.getIfeed());
-        // pDto의 ifeed에 dto의 ifeed를 넣는다
-        for (MultipartFile file : dto.getPics()) {
-            // 반복문
-            String saveFileNm = myFileUtils.transferTo(file,target);
-            // 메모리에 있는 내용을 파일로 옮기는 작업
-            pDto.getPics().add(saveFileNm);
-            // pDto의 사진들에 saveFileNm을 넣는다
+        if(dto.getPics() == null){
+            throw new RestApiException(FeedErrorCode.PICS_MORE_THEN_ONE);
         }
-        int feedPicsAffectedRow = picsMapper.insFeedPics(pDto);
-        // (피드에 사진넣는)mapper 실행
-        return pDto;
+        UserEntity userEntity = userRepository.getReferenceById((long)authenticationFacade.getLoginUserPk());
 
+        FeedEntity feedEntity = new FeedEntity();
+        feedEntity.setUserEntity(userEntity);
+        feedEntity.setContents(dto.getContents());
+        feedEntity.setLocation(dto.getLocation());
+        feedRepository.save(feedEntity);
+
+        String target = "/feed/" + feedEntity.getIfeed();
+
+        FeedPicsInsDto pDto = new FeedPicsInsDto();
+        pDto.setIfeed(feedEntity.getIfeed().intValue());
+        for (MultipartFile file: dto.getPics()) {
+            String saveFileNm = myFileUtils.transferTo(file,target);
+            pDto.getPics().add(saveFileNm);
+        }
+        //  업로드할 사진 선택 수 만큼 반복문 돔
+        List<FeedPicsEntity> feedPicsEntityList = pDto.getPics().stream()
+                .map(item -> FeedPicsEntity.builder()
+                        .feedEntity(feedEntity)
+                        .pic(item)
+                        .build()
+                ).collect(Collectors.toList());
+        feedEntity.getFeedPicsEntityList().addAll(feedPicsEntityList);
+
+        return pDto;
     }
 
-    public List<FeedSelVo> getFeedAll(FeedSelDto dto) {
+    public List<FeedSelVo> getFeedAll(FeedSelDto dto, Pageable pageable) {
+        List<FeedSelVo> list = null;
+        if (dto.getIsFavList() == 0 && dto.getTargetIuser() > 0) {
+            UserEntity userEntity = new UserEntity();
+            userEntity.setIuser((long)dto.getTargetIuser());
+            List<FeedEntity> feedEntityList = feedRepository.findAllByUserEntityOrderByIfeedDesc(userEntity, pageable);
+        }
+
         // FeedSelDto에 rowCount는 20 고정, startIdx는 메소드를 통해 미리 계산
         List<FeedSelVo> feedList = mapper.selFeedAll(dto);
 
@@ -85,6 +136,11 @@ public class FeedService {
         }
         return feedList;
     }
+
+//    public List<FeedSelVo> getFeedAll(FeedSelDto dto) {
+//
+//
+//    }
 
     public ResVo toggleFeedFav(FeedFavDto dto){
         // ResVo - result 값은 삭제 했을 시 (좋아요 취소) 0
