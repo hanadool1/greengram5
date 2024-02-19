@@ -28,7 +28,9 @@ public class FeedEntity extends BaseEntity{
     private UserEntity userEntity;
 
     @ToString.Exclude // @Data에 @ToString 어노테이션이 있기 때문에, 이 멤버필드는 ToString 제외 시켜달라는 어노테이션
-    @OneToMany(mappedBy = "feedEntity", cascade = CascadeType.PERSIST) // 양방향
+    @OneToMany(mappedBy = "feedEntity", cascade = CascadeType.PERSIST) // 양방향, 영속성 전이
+    //영속성전이 이게 빠져있으면 insert할 때 피드, 사진 두번 insert를 해야 하는데
+    //내가 직접 날리지 않고 알아서 매핑하여 같이 보내줌
     private List<FeedPicsEntity> feedPicsEntityList = new ArrayList<>();
 
 }

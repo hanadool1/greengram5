@@ -14,13 +14,14 @@ import com.green.greengram4.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
 @Service
@@ -32,6 +33,7 @@ public class FeedService {
     private final FeedCommentMapper commentMapper;
     private final FeedRepository feedRepository;
     private final UserRepository userRepository;
+    private final FeedCommentRepository commentRepository;
     private final AuthenticationFacade authenticationFacade;
     private final MyFileUtils myFileUtils;
 
@@ -93,54 +95,86 @@ public class FeedService {
         return pDto;
     }
 
+//    public List<FeedSelVo> getFeedAll(FeedSelDto dto, Pageable pageable) {
+//        List<FeedEntity> feedEntityList;
+//        if (dto.getIsFavList() == 0 && dto.getTargetIuser() > 0) {
+//            UserEntity userEntity = new UserEntity();
+//            userEntity.setIuser((long)dto.getTargetIuser());
+//            feedEntityList = feedRepository.findAllByUserEntityOrderByIfeedDesc(userEntity, pageable);
+//        }
+//
+//        // FeedSelDto에 rowCount는 20 고정, startIdx는 메소드를 통해 미리 계산
+//        List<FeedSelVo> feedList = mapper.selFeedAll(dto);
+//
+//        FeedCommentSelDto fcDto = new FeedCommentSelDto();
+//        // FeedCommentSelDto 객체화
+//        fcDto.setStartIdx(0);
+//        // fcDto에 있는 startIdx에 0을 (setter를 사용하여) 넣는다
+//        fcDto.setRowCount(4);
+//        // fcDto에 있는 rowCount에 4를 (setter를 사용하여) 넣는다
+//
+//        for (FeedSelVo vo : feedList) {
+//            // feedList 반복
+//            List<String> picList = picsMapper.selFeedPicsAll(vo.getIfeed());
+//            // selFeedPicsAll 실행(한 페이지에 있는 피드들의 pk값을 파라미터로 가져온다)
+//            vo.setPics(picList);
+//            // vo에 있는 pics에 picList를 (setter를 이용해서) 넣는다
+//
+//            fcDto.setIfeed(vo.getIfeed());
+//            // 위에서 fcDto에 startIdx와 rowCount를 넣었고,
+//            // 반복문 안에서 vo의 ifeed를 (getter를 이용하여) 빼서
+//            // fcDto에 있는 ifeed에 (setter를 이용하여) 넣는다
+//            List<FeedCommentSelVo> commentList = commentMapper.selFeedCommentAll(fcDto);
+//            // selFeedCommentAll 실행(반복문 돌면서 commentList에 댓글 저장)
+//            if (commentList.size() == Const.FEED_COMMENT_FIRST_CNT) {
+//                // commentList의 사이즈가 == 4인 경우
+//                vo.setIsMoreComment(1);
+//                // 댓글 더보기
+//                commentList.remove(commentList.size()-1);
+//                // commentList에 저장된 마지막 댓글 한개 지우기
+//            }
+//            vo.setComments(commentList);
+//            // vo에 있는 comments에 commentList를 (setter를 이용해서) 넣는다
+//        }
+//        return feedList;
+//    }
+
     public List<FeedSelVo> getFeedAll(FeedSelDto dto, Pageable pageable) {
-        List<FeedSelVo> list = null;
+        List<FeedEntity> feedEntityList = null;
         if (dto.getIsFavList() == 0 && dto.getTargetIuser() > 0) {
             UserEntity userEntity = new UserEntity();
             userEntity.setIuser((long)dto.getTargetIuser());
-            List<FeedEntity> feedEntityList = feedRepository.findAllByUserEntityOrderByIfeedDesc(userEntity, pageable);
+            feedEntityList = feedRepository.findAllByUserEntityOrderByIfeedDesc(userEntity, pageable);
         }
+        return feedEntityList == null
+                ? new ArrayList<>()
+                : feedEntityList.stream().map(item -> {
+                    // item : feedEntity 피드 하나
+                    List<FeedCommentSelVo> cmtList = commentRepository.findAllTop4ByFeedEntity(item).stream().map(cmt ->
+                                FeedCommentSelVo.builder()
+                                        .ifeedComment(cmt.getIfeedComment().intValue())
+                                        .comment(cmt.getComment())
+                                        .createdAt(cmt.getCreatedAt().toString())
+                                        .writerPic(cmt.getUserEntity().getPic())
+                                        .writerIuser(cmt.getUserEntity().getIuser().intValue())
+                                        .writerNm(cmt.getUserEntity().getNm())
+                                        .build()
+                            ).collect(Collectors.toList());
+                    // 피드 하나 당 가지고 있는 코멘트가져오려고
 
-        // FeedSelDto에 rowCount는 20 고정, startIdx는 메소드를 통해 미리 계산
-        List<FeedSelVo> feedList = mapper.selFeedAll(dto);
-
-        FeedCommentSelDto fcDto = new FeedCommentSelDto();
-        // FeedCommentSelDto 객체화
-        fcDto.setStartIdx(0);
-        // fcDto에 있는 startIdx에 0을 (setter를 사용하여) 넣는다
-        fcDto.setRowCount(4);
-        // fcDto에 있는 rowCount에 4를 (setter를 사용하여) 넣는다
-
-        for (FeedSelVo vo : feedList) {
-            // feedList 반복
-            List<String> picList = picsMapper.selFeedPicsAll(vo.getIfeed());
-            // selFeedPicsAll 실행(한 페이지에 있는 피드들의 pk값을 파라미터로 가져온다)
-            vo.setPics(picList);
-            // vo에 있는 pics에 picList를 (setter를 이용해서) 넣는다
-
-            fcDto.setIfeed(vo.getIfeed());
-            // 위에서 fcDto에 startIdx와 rowCount를 넣었고,
-            // 반복문 안에서 vo의 ifeed를 (getter를 이용하여) 빼서
-            // fcDto에 있는 ifeed에 (setter를 이용하여) 넣는다
-            List<FeedCommentSelVo> commentList = commentMapper.selFeedCommentAll(fcDto);
-            // selFeedCommentAll 실행(반복문 돌면서 commentList에 댓글 저장)
-            if (commentList.size() == Const.FEED_COMMENT_FIRST_CNT) {
-                // commentList의 사이즈가 == 4인 경우
-                vo.setIsMoreComment(1);
-                // 댓글 더보기
-                commentList.remove(commentList.size()-1);
-                // commentList에 저장된 마지막 댓글 한개 지우기
-            }
-            vo.setComments(commentList);
-            // vo에 있는 comments에 commentList를 (setter를 이용해서) 넣는다
+                    return FeedSelVo.builder()
+                            .ifeed(item.getIfeed().intValue())
+                            .contents(item.getContents())
+                            .location(item.getLocation())
+                            .createdAt(item.getCreatedAt().toString())
+                            .writerIuser(item.getUserEntity().getIuser().intValue())
+                            .writerNm(item.getUserEntity().getNm())
+                            .writerPic(item.getUserEntity().getPic())
+                            .comments(cmtList)
+                            .build();
         }
-        return feedList;
+                ).collect(Collectors.toList());
     }
-
-//    public List<FeedSelVo> getFeedAll(FeedSelDto dto) {
-//
-//
-//    }
 
     public ResVo toggleFeedFav(FeedFavDto dto){
         // ResVo - result 값은 삭제 했을 시 (좋아요 취소) 0
