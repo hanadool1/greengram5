@@ -10,4 +10,5 @@ import java.util.List;
 public interface FeedCommentRepository extends JpaRepository<FeedCommentEntity, Long> {
     @EntityGraph(attributePaths = {"userEntity"})
     List<FeedCommentEntity> findAllTop4ByFeedEntity(FeedEntity feedEntity);
+    // findAll:select, Top4:limit, FeedEntity:where절
 }
