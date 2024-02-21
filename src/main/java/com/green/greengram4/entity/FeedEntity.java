@@ -33,4 +33,8 @@ public class FeedEntity extends BaseEntity{
     //내가 직접 날리지 않고 알아서 매핑하여 같이 보내줌
     private List<FeedPicsEntity> feedPicsEntityList = new ArrayList<>();
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "feedEntity")
+    private List<FeedFavEntity> feedFavEntityList = new ArrayList<>();
+
 }

@@ -141,60 +141,67 @@ public class FeedService {
 //        }
 //        return feedList;
 //    }
+
+//    @Transactional
+//    public List<FeedSelVo> getFeedAll(FeedSelDto dto, Pageable pageable) {
+//        List<FeedEntity> feedEntityList = null;
+//        if (dto.getIsFavList() == 0 && dto.getTargetIuser() > 0) {
+//            UserEntity userEntity = new UserEntity();
+//            userEntity.setIuser((long) dto.getTargetIuser());
+//            feedEntityList = feedRepository.findAllByUserEntityOrderByIfeedDesc(userEntity, pageable);
+//        }
+//        return feedEntityList == null
+//                ? new ArrayList<>()
+//                : feedEntityList.stream().map(item -> {
+//                    // item : feedEntity 피드 하나
+//            FeedFavIds feedFavIds = new FeedFavIds();
+//            feedFavIds.setIuser((long)authenticationFacade.getLoginUserPk());
+//            feedFavIds.setIfeed(item.getIfeed());
+//            int isFav = favRepository.findById(feedFavIds).isPresent()? 1 : 0;
+//
+//            List<FeedPicsEntity> picList = item.getFeedPicsEntityList();
+//            List<String> pics = picList.stream().map(pic -> pic.getPic()).collect(Collectors.toList());
+//
+//                    List<FeedCommentSelVo> cmtList = commentRepository.findAllTop4ByFeedEntity(item).stream().map(cmt ->
+//                            FeedCommentSelVo.builder()
+//                                    .ifeedComment(cmt.getIfeedComment().intValue())
+//                                    .comment(cmt.getComment())
+//                                    .createdAt(cmt.getCreatedAt().toString())
+//                                    .writerPic(cmt.getUserEntity().getPic())
+//                                    .writerIuser(cmt.getUserEntity().getIuser().intValue())
+//                                    .writerNm(cmt.getUserEntity().getNm())
+//                                    .build()
+//                    ).collect(Collectors.toList());
+//                    // 피드 하나 당 가지고 있는 코멘트가져오려고
+//                    int isMoreComment;
+//                    if (cmtList.size() == Const.FEED_COMMENT_FIRST_CNT) {
+//                        isMoreComment = 1;
+//                        cmtList.remove(Const.FEED_COMMENT_FIRST_CNT - 1);
+//                    }else {
+//                        isMoreComment = 0;
+//                    }
+//
+//            return FeedSelVo.builder()
+//                            .ifeed(item.getIfeed().intValue())
+//                            .contents(item.getContents())
+//                            .location(item.getLocation())
+//                            .createdAt(item.getCreatedAt().toString())
+//                            .writerIuser(item.getUserEntity().getIuser().intValue())
+//                            .writerNm(item.getUserEntity().getNm())
+//                            .writerPic(item.getUserEntity().getPic())
+//                            .comments(cmtList)
+//                            .isMoreComment(isMoreComment)
+//                            .pics(pics)
+//                            .isFav(isFav)
+//                            .build();
+//                }
+//        ).collect(Collectors.toList());
+//    }
+
     @Transactional
     public List<FeedSelVo> getFeedAll(FeedSelDto dto, Pageable pageable) {
-        List<FeedEntity> feedEntityList = null;
-        if (dto.getIsFavList() == 0 && dto.getTargetIuser() > 0) {
-            UserEntity userEntity = new UserEntity();
-            userEntity.setIuser((long) dto.getTargetIuser());
-            feedEntityList = feedRepository.findAllByUserEntityOrderByIfeedDesc(userEntity, pageable);
-        }
-        return feedEntityList == null
-                ? new ArrayList<>()
-                : feedEntityList.stream().map(item -> {
-                    // item : feedEntity 피드 하나
-            FeedFavIds feedFavIds = new FeedFavIds();
-            feedFavIds.setIuser((long)authenticationFacade.getLoginUserPk());
-            feedFavIds.setIfeed(item.getIfeed());
-            int isFav = favRepository.findById(feedFavIds).isPresent()? 1 : 0;
-
-            List<FeedPicsEntity> picList = item.getFeedPicsEntityList();
-            List<String> pics = picList.stream().map(pic -> pic.getPic()).collect(Collectors.toList());
-
-                    List<FeedCommentSelVo> cmtList = commentRepository.findAllTop4ByFeedEntity(item).stream().map(cmt ->
-                            FeedCommentSelVo.builder()
-                                    .ifeedComment(cmt.getIfeedComment().intValue())
-                                    .comment(cmt.getComment())
-                                    .createdAt(cmt.getCreatedAt().toString())
-                                    .writerPic(cmt.getUserEntity().getPic())
-                                    .writerIuser(cmt.getUserEntity().getIuser().intValue())
-                                    .writerNm(cmt.getUserEntity().getNm())
-                                    .build()
-                    ).collect(Collectors.toList());
-                    // 피드 하나 당 가지고 있는 코멘트가져오려고
-                    int isMoreComment;
-                    if (cmtList.size() == Const.FEED_COMMENT_FIRST_CNT) {
-                        isMoreComment = 1;
-                        cmtList.remove(Const.FEED_COMMENT_FIRST_CNT - 1);
-                    }else {
-                        isMoreComment = 0;
-                    }
-
-            return FeedSelVo.builder()
-                            .ifeed(item.getIfeed().intValue())
-                            .contents(item.getContents())
-                            .location(item.getLocation())
-                            .createdAt(item.getCreatedAt().toString())
-                            .writerIuser(item.getUserEntity().getIuser().intValue())
-                            .writerNm(item.getUserEntity().getNm())
-                            .writerPic(item.getUserEntity().getPic())
-                            .comments(cmtList)
-                            .isMoreComment(isMoreComment)
-                            .pics(pics)
-                            .isFav(isFav)
-                            .build();
-                }
-        ).collect(Collectors.toList());
+        List<FeedSelVo> list = feedRepository.selFeedAll((long)authenticationFacade.getLoginUserPk(), dto.getTargetIuser(), pageable);
+        return list;
     }
 
     public ResVo toggleFeedFav(FeedFavDto dto) {
