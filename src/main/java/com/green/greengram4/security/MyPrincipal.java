@@ -13,7 +13,6 @@ import java.util.List;
 public class MyPrincipal {
     private int iuser;
 
-
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 }

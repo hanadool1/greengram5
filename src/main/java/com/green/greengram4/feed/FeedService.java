@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -200,8 +199,23 @@ public class FeedService {
 
     @Transactional
     public List<FeedSelVo> getFeedAll(FeedSelDto dto, Pageable pageable) {
-        List<FeedSelVo> list = feedRepository.selFeedAll((long)authenticationFacade.getLoginUserPk(), dto.getTargetIuser(), pageable);
-        return list;
+        dto.setLoginedIuser(authenticationFacade.getLoginUserPk());
+        List<FeedEntity> list = feedRepository.selFeedAll(dto, pageable);
+        List<FeedPicsEntity> picList = feedRepository.selFeedPicsAll(list);
+
+        // return list;
+        return list.stream().map(feed ->
+                        FeedSelVo.builder()
+                                .ifeed(feed.getIfeed().intValue())
+                                .contents(feed.getContents())
+                                .location(feed.getLocation())
+                                .createdAt(feed.getCreatedAt().toString())
+                                .writerIuser(feed.getUserEntity().getIuser().intValue())
+                                .writerNm(feed.getUserEntity().getNm())
+                                .writerPic(feed.getUserEntity().getPic())
+                                .pics(picList.stream().filter(pic -> pic.getFeedEntity().getIfeed() == feed.getIfeed()).map(pic -> pic.getPic()).collect(Collectors.toList()))
+                                .build())
+                .collect(Collectors.toList());
     }
 
     public ResVo toggleFeedFav(FeedFavDto dto) {
